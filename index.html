@@ -1,0 +1,159 @@
+<html>
+<head>
+  <title>Atmo</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { 
+    background-color:black;
+    padding: 10px; 
+    }
+    h1 {
+    color:white;
+        margin-bottom: 10px; 
+        text-shadow: 1px 1px 2px black;
+        }
+    h2 { 
+   margin-top: 20px; 
+   color:white;
+   text-shadow: 1px 1px 2px black;
+   }
+    .b {
+       margin: 6px 0;
+        padding: 6px;
+        background: #f1f2f4;
+         border-radius: 4px;
+        
+         backdrop-filter: blur(6px);
+         background-color: rgba(255, 255, 255, 0.55);
+         
+          }
+    #t5 {
+     margin-top: 15px;
+      }
+      h3{
+      color:white;
+      text-shadow: 1px 1px 2px black;
+      }
+      
+      input,button{
+        padding:6px;
+        border-radius:4px;
+        border:1px solid black;
+        box-shadow: 1px 1px 2px black;
+      }
+  </style>
+</head>
+<body>
+  <center><h1> Atmo </h1>
+  <input id="i" placeholder="Enter city" />
+  <button onclick="g()">Get Weather</button>
+  </center>
+  <div id="t5"></div>
+  <div id="o"></div>
+
+  <script>
+    async function g() {
+      let c = i.value.trim();
+      if (!c) return;
+      t5.innerHTML = `<h3>Loading...</h3>`;
+      o.innerHTML = "";
+      try {
+        let r = await fetch(`https://wttr.in/${c}?format=j1`);
+        let d = await r.json();
+        let x = d.current_condition[0];
+        let y = d.weather[0];
+        let a = y.astronomy[0];
+        let h = y.hourly[0];
+        let u = new Date(x.localObsDateTime).toLocaleString();
+
+        let top = [
+          ["Temperature (°C)", x.temp_C],
+          ["Feels Like (°C)", x.FeelsLikeC],
+          ["Condition", x.weatherDesc[0].value],
+          ["Humidity (%)", x.humidity],
+          ["Wind (km/h)", x.windspeedKmph]
+        ];
+
+        t5.innerHTML = `<center><h2> ${c} </h2> </center> <div class="b">Last Updated: ${u}</div>`;
+        for (let [k, v] of top) {
+          let e = document.createElement("div");
+          e.className = "b";
+          e.textContent = k + ": " + v;
+          t5.appendChild(e);
+        }
+
+        f("Today's Forecast", [
+          ["Max Temp (°C)", y.maxtempC],
+          ["Min Temp (°C)", y.mintempC],
+          ["Date", y.date]
+        ]);
+
+        f("Astronomy", [
+          ["Sunrise", a.sunrise],
+          ["Sunset", a.sunset],
+          ["Moonrise", a.moonrise],
+          ["Moonset", a.moonset],
+          ["Moon Phase", a.moon_phase],
+          ["Moon Illumination", a.moon_illumination]
+        ]);
+
+        f("More Current Details", [
+          ["Pressure (mb)", x.pressure],
+          ["Cloud Cover (%)", x.cloudcover],
+          ["UV Index", x.uvIndex],
+          ["Visibility (km)", x.visibility],
+          ["Gust Speed (km/h)", x.gustKmph],
+          ["Dew Point (°C)", x.DewPointC],
+          ["Precipitation (mm)", x.precipMM],
+          ["Wind Direction", x.winddir16Point]
+        ]);
+
+        f("First Hour Forecast", [
+          ["Temp (°C)", h.tempC],
+          ["Feels Like (°C)", h.FeelsLikeC],
+          ["Condition", h.weatherDesc[0].value],
+          ["Wind (km/h)", h.windspeedKmph],
+          ["Pressure", h.pressure],
+          ["Humidity", h.humidity],
+          ["Dew Point (°C)", h.DewPointC],
+          ["Precipitation (mm)", h.precipMM],
+          ["UV Index", h.uvIndex],
+          ["Visibility", h.visibility]
+        ]);
+      } catch {
+        t5.textContent = "Error loading data";
+      }
+    }
+
+    function f(t, l) {
+      let h = document.createElement("h2");
+      h.textContent = t;
+      o.appendChild(h);
+      for (let [k, v] of l) {
+        let e = document.createElement("div");
+        e.className = "b";
+        e.textContent = k + ": " + v;
+        o.appendChild(e);
+      }
+    }
+    
+    
+    function bignk(m, d) {
+    let u = navigator.userAgent.toLowerCase();
+    let mbl = /android|iphone|ipad|mobile/.test(u) || innerWidth < 768;
+    let b = document.body;
+    b.style.backgroundImage = `url('${mbl ? m : d}')`;
+    b.style.backgroundSize = 'cover';
+    b.style.backgroundPosition = 'center';
+    b.style.backgroundRepeat = 'no-repeat';
+    b.style.backgroundAttachment = 'fixed';
+    b.style.minHeight = '100vh';
+    document.documentElement.style.height = 'auto';
+    b.style.overflow = 'auto';
+    }
+    
+    bignk("https://raw.githubusercontent.com/microintel/endgram/main/photo/portrait%20weather.jpg","https://raw.githubusercontent.com/microintel/endgram/main/photo/weather.jpeg");
+  </script>
+</body>
+</html>
